@@ -1,6 +1,6 @@
 //Kenzie Whitman Section 3, Mission 11 assignment
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 import BookList from './components/BookList';
 
 function App() {

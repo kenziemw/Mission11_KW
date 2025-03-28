@@ -79,3 +79,4 @@
 /Users/makenziewhitman/Mission11/OnlineBookstore.API/obj/Debug/net8.0/OnlineBookstore.API.sourcelink.json
 =======
 >>>>>>> origin/main
+/Users/makenziewhitman/Mission11/OnlineBookstore.API/bin/Debug/net8.0/Newtonsoft.Json.dll

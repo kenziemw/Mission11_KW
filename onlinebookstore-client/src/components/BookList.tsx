@@ -1,6 +1,8 @@
-//Kenzie Whitman Section 3, Mission 11
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+
+// Configure axios to include credentials (cookies) in all requests.
+axios.defaults.withCredentials = true;
 
 interface Book {
   bookID: number;
@@ -9,122 +11,198 @@ interface Book {
   publisher: string;
   isbn: string;
   classification: string;
-  category: string;    // Add this
+  category: string;
   pageCount: number;
   price: number;
 }
 
-const BookList: React.FC = () => {
+interface CartItem {
+  bookID: number;
+  title: string;
+  price: number;
+  quantity: number;
+  subtotal: number;
+}
+
+const BookList = () => {
   const [books, setBooks] = useState<Book[]>([]);
+  const [category, setCategory] = useState<string>('');
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(5);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [booksPerPage, setBooksPerPage] = useState<number>(5);
 
-  // Fetch books from the API
-  const fetchBooks = async () => {
+  const apiUrl = category
+    ? `http://localhost:5272/api/books/category/${category}`
+    : `http://localhost:5272/api/books/all`;
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await axios.get(apiUrl);
+        setBooks(response.data);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
+    };
+
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get('http://localhost:5272/api/cart');
+        setCart(response.data);
+      } catch (error) {
+        console.error('Error fetching cart:', error);
+      }
+    };
+
+    fetchBooks();
+    fetchCart();
+  }, [apiUrl, booksPerPage]);
+
+  const addToCart = async (bookID: number) => {
     try {
-      const response = await axios.get<Book[]>('http://localhost:5272/api/Books', {
-        params: {
-          page,
-          pageSize,
-          sortBy: 'Title',
-          sortOrder
-        }
-      });
-      setBooks(response.data);
-
-      // Read the total count from the response header
-      const total = response.headers['x-total-count'];
-      setTotalCount(Number(total));
+      const response = await axios.post(`http://localhost:5272/api/cart/${bookID}`);
+      setCart(response.data);
     } catch (error) {
-      console.error('Error fetching books:', error);
+      console.error('Error adding to cart:', error);
     }
   };
 
-  useEffect(() => {
-    fetchBooks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, pageSize, sortOrder]);
-
-  const totalPages = Math.ceil(totalCount / pageSize);
-
-  const handleSortByTitle = () => {
-    setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
-  };
-
-  // Create an array [1..totalPages] for page numbers
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const paginatedBooks = books.slice((page - 1) * booksPerPage, page * booksPerPage);
+  const pageCount = Math.ceil(books.length / booksPerPage);
+  const total = cart.reduce((sum, item) => sum + item.subtotal, 0);
+  const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const progress = Math.min(100, totalQuantity * 20);
 
   return (
     <div className="container mt-4">
-      <h2>Online Bookstore</h2>
+      {/* Header + Filters */}
+      <div className="sticky-top bg-white p-2">
+        <h2>Online Bookstore</h2>
 
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th style={{ cursor: 'pointer' }} onClick={handleSortByTitle}>
-              Title {sortOrder === 'asc' ? '▲' : '▼'}
-            </th>
-            <th>Author</th>
-            <th>Publisher</th>
-            <th>ISBN</th>
-            <th>Classification</th>
-            <th>Category</th> {/* NEW COLUMN */}
-            <th>Page Count</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {books.map(book => (
-            <tr key={book.bookID}>
-              <td>{book.title}</td>
-              <td>{book.author}</td>
-              <td>{book.publisher}</td>
-              <td>{book.isbn}</td>
-              <td>{book.classification}</td>
-              <td>{book.category}</td> {/* RENDER CATEGORY */}
-              <td>{book.pageCount}</td>
-              <td>${book.price.toFixed(2)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Pagination with page numbers */}
-      <div className="d-flex justify-content-center mt-3">
-        <ul className="pagination">
-          {pageNumbers.map(pg => (
-            <li
-              key={pg}
-              className={`page-item ${page === pg ? 'active' : ''}`}
+        <div className="row mb-3">
+          <div className="col-md-6">
+            <label htmlFor="categorySelect">Filter by Category:</label>
+            <select
+              id="categorySelect"
+              className="form-select"
+              onChange={(e) => {
+                setCategory(e.target.value);
+                setPage(1);
+              }}
             >
-              <button
-                className="page-link"
-                onClick={() => setPage(pg)}
-              >
-                {pg}
-              </button>
-            </li>
-          ))}
-        </ul>
+              <option value="">All</option>
+              <option value="Biography">Biography</option>
+              <option value="Self-Help">Self-Help</option>
+              <option value="Classic">Classic</option>
+              <option value="Health">Health</option>
+            </select>
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="perPage">Results per page:</label>
+            <select
+              id="perPage"
+              className="form-select"
+              value={booksPerPage}
+              onChange={(e) => {
+                setBooksPerPage(Number(e.target.value));
+                setPage(1);
+              }}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      {/* Change number of results per page */}
-      <div className="mt-3">
-        <label>Results per page: </label>
-        <select
-          className="ms-2"
-          value={pageSize}
-          onChange={(e) => {
-            setPageSize(Number(e.target.value));
-            setPage(1); // Reset to page 1
-          }}
-        >
-          <option value={5}>5</option>
-          <option value={10}>10</option>
-          <option value={20}>20</option>
-        </select>
+      {/* Book list and cart side-by-side */}
+      <div className="row">
+        {/* Book Table */}
+        <div className="col-md-8">
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>Title</th><th>Author</th><th>Publisher</th><th>ISBN</th>
+                <th>Classification</th><th>Category</th><th>Page Count</th><th>Price</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedBooks.map((book) => (
+                <tr key={book.bookID}>
+                  <td>{book.title}</td>
+                  <td>{book.author}</td>
+                  <td>{book.publisher}</td>
+                  <td>{book.isbn}</td>
+                  <td>{book.classification}</td>
+                  <td>{book.category}</td>
+                  <td>{book.pageCount}</td>
+                  <td>${book.price.toFixed(2)}</td>
+                  <td>
+                    <button className="btn btn-sm btn-outline-primary" onClick={() => addToCart(book.bookID)}>
+                      Add to Cart
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="d-flex justify-content-center">
+            <nav>
+              <ul className="pagination">
+                {Array.from({ length: pageCount }, (_, i) => (
+                  <li key={i + 1} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
+                    <button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        {/* Cart Summary */}
+        <div className="col-md-4 border rounded p-3 shadow-sm">
+          <h4>
+            🛒 Cart Summary <span className="badge bg-primary">{totalQuantity}</span>
+          </h4>
+
+          <ul className="list-group mb-2">
+            {cart.map((item) => (
+              <li key={item.bookID} className="list-group-item d-flex justify-content-between align-items-center">
+                <span>{item.title} x {item.quantity}</span>
+                <span>${item.subtotal.toFixed(2)}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="d-flex justify-content-between mt-2 mb-3">
+            <strong>Total:</strong>
+            <strong>${total.toFixed(2)}</strong>
+          </div>
+
+          <div className="progress mb-3">
+            <div
+              className="progress-bar"
+              role="progressbar"
+              style={{ width: `${progress}%` }}
+              aria-valuenow={progress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              {progress}%
+            </div>
+          </div>
+
+            <button
+              className="btn btn-success w-100"
+              onClick={() => alert('🛍️ Checkout feature coming soon!')}
+            >
+              Proceed to Checkout
+            </button>
+
+        </div>
       </div>
     </div>
   );

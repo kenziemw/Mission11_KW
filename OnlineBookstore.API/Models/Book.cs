@@ -1,10 +1,9 @@
-//Kenzie Whitman Section 3, Mission 11
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnlineBookstore.API.Models
 {
-    [Table("Books")] 
+    [Table("Books")]
     public class Book
     {
         [Key]
@@ -13,27 +12,25 @@ namespace OnlineBookstore.API.Models
 
         [Required]
         [Column("Title")]
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
 
         [Required]
         [Column("Author")]
-        public string Author { get; set; }
+        public string Author { get; set; } = null!;
 
         [Required]
         [Column("Publisher")]
-        public string Publisher { get; set; }
+        public string Publisher { get; set; } = null!;
 
         [Required]
         [Column("ISBN")]
-        public string ISBN { get; set; }
+        public string ISBN { get; set; } = null!;
 
-        // If your DB column is called "Classification"
         [Column("Classification")]
-        public string Classification { get; set; }
+        public string Classification { get; set; } = null!;
 
-        // If your DB column is called "Category"
         [Column("Category")]
-        public string Category { get; set; }
+        public string Category { get; set; } = null!;
 
         [Required]
         [Column("PageCount")]

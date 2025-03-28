@@ -16,6 +16,17 @@ namespace OnlineBookstore.API.Controllers
             _context = context;
         }
 
+        [HttpGet("category/{category}")]
+        public IActionResult GetBooksByCategory(string category)
+        {
+            var books = _context.Books
+                .Where(b => b.Category.ToLower() == category.ToLower())
+                .ToList();
+
+            return Ok(books);
+        }
+
+
         // GET: api/Books?page=1&pageSize=5&sortBy=Title&sortOrder=asc
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks(
@@ -45,5 +56,12 @@ namespace OnlineBookstore.API.Controllers
 
             return books;
         }
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<Book>>> GetAllBooks()
+            {
+                var books = await _context.Books.ToListAsync();
+                return Ok(books);
+            }
+
     }
 }
