@@ -1795,11 +1795,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/makenziewhitman/Mission11/OnlineBookstore.API/OnlineBookstore.API.csproj",
+      "projectUniqueName": "/Users/makenziewhitman/Documents/Mission12/Mission11_KW/OnlineBookstore.API/OnlineBookstore.API.csproj",
       "projectName": "OnlineBookstore.API",
-      "projectPath": "/Users/makenziewhitman/Mission11/OnlineBookstore.API/OnlineBookstore.API.csproj",
+      "projectPath": "/Users/makenziewhitman/Documents/Mission12/Mission11_KW/OnlineBookstore.API/OnlineBookstore.API.csproj",
       "packagesPath": "/Users/makenziewhitman/.nuget/packages/",
-      "outputPath": "/Users/makenziewhitman/Mission11/OnlineBookstore.API/obj/",
+      "outputPath": "/Users/makenziewhitman/Documents/Mission12/Mission11_KW/OnlineBookstore.API/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/makenziewhitman/.nuget/NuGet/NuGet.Config"
