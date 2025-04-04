@@ -26,15 +26,12 @@ namespace OnlineBookstore.API.Controllers
             return Ok(books);
         }
 
-
-        // GET: api/Books?page=1&pageSize=5&sortBy=Title&sortOrder=asc
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks(
             int page = 1, int pageSize = 5, string sortBy = "Title", string sortOrder = "asc")
         {
             IQueryable<Book> query = _context.Books;
 
-            // Sorting (currently supports sorting by Title)
             if (sortBy.Equals("Title", StringComparison.OrdinalIgnoreCase))
             {
                 query = sortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase)
@@ -42,26 +39,56 @@ namespace OnlineBookstore.API.Controllers
                     : query.OrderByDescending(b => b.Title);
             }
 
-            // Get total count for pagination metadata.
             var totalBooks = await query.CountAsync();
+            var books = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 
-            // Pagination logic
-            var books = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            // Optionally, send total count in the response header.
             Response.Headers["X-Total-Count"] = totalBooks.ToString();
 
             return books;
         }
+
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<Book>>> GetAllBooks()
-            {
-                var books = await _context.Books.ToListAsync();
-                return Ok(books);
-            }
+        {
+            var books = await _context.Books.ToListAsync();
+            return Ok(books);
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> AddBook([FromBody] Book book)
+        {
+            if (book == null)
+                return BadRequest("Book is null.");
+
+            _context.Books.Add(book);
+            await _context.SaveChangesAsync();
+
+            return Ok(book);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBook(int id, [FromBody] Book book)
+        {
+            if (id != book.BookID)
+                return BadRequest();
+
+            _context.Entry(book).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBook(int id)
+        {
+            var book = await _context.Books.FindAsync(id);
+            if (book == null)
+                return NotFound();
+
+            _context.Books.Remove(book);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

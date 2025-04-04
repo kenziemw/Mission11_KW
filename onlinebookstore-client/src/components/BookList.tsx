@@ -1,5 +1,10 @@
+//kenzie whitman
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { Container } from "react-bootstrap";
+
 
 // Configure axios to include credentials (cookies) in all requests.
 axios.defaults.withCredentials = true;
@@ -66,6 +71,7 @@ const BookList = () => {
       console.error('Error adding to cart:', error);
     }
   };
+  const navigate = useNavigate();
 
   const paginatedBooks = books.slice((page - 1) * booksPerPage, page * booksPerPage);
   const pageCount = Math.ceil(books.length / booksPerPage);
@@ -73,11 +79,36 @@ const BookList = () => {
   const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
   const progress = Math.min(100, totalQuantity * 20);
 
+  const BookList: React.FC = () => {
+    const navigate = useNavigate();
+  
+    return (
+      <Container className="mt-5">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2>Book List</h2>
+          <Button variant="dark" onClick={() => navigate("/Admin")}>
+            Admin Page
+          </Button>
+        </div>
+  
+        {/* Your book list content below */}
+      </Container>
+    );
+  };
+
+
   return (
     <div className="container mt-4">
       {/* Header + Filters */}
       <div className="sticky-top bg-white p-2">
-        <h2>Online Bookstore</h2>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2>Online Bookstore</h2>
+          <Button variant="dark" onClick={() => navigate("/Admin")}>
+            Admin Page
+          </Button>
+              </div>
+
+
 
         <div className="row mb-3">
           <div className="col-md-6">
