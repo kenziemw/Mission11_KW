@@ -159,3 +159,4 @@
 /Users/makenziewhitman/Documents/Mission12/Mission11_KW/OnlineBookstore.API/obj/Debug/net8.0/OnlineBookstore.API.pdb
 /Users/makenziewhitman/Documents/Mission12/Mission11_KW/OnlineBookstore.API/obj/Debug/net8.0/OnlineBookstore.API.genruntimeconfig.cache
 /Users/makenziewhitman/Documents/Mission12/Mission11_KW/OnlineBookstore.API/obj/Debug/net8.0/ref/OnlineBookstore.API.dll
+/Users/makenziewhitman/Documents/Mission12/Mission11_KW/OnlineBookstore.API/bin/Debug/net8.0/Bookstore.sqlite

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Book } from "../models/Book";
 
-const API_URL = "http://localhost:5272/api/books";
+const API_URL = "https://onlinebookstore-kenz-backend-h7axfjgmgcgkexaa.westus3-01.azurewebsites.net/api";
 
 export const getBooks = async (
   page: number,
@@ -15,7 +15,7 @@ export const getBooks = async (
       : "";
 
     const response = await axios.get(
-      `${API_URL}?page=${page}&pageSize=${pageSize}&sortBy=${sortBy}${categoryParam}`
+      `${API_URL}/books?page=${page}&pageSize=${pageSize}&sortBy=${sortBy}${categoryParam}`
     );
 
     const books = response.data;
