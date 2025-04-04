@@ -1,0 +1,5 @@
+{
+    "appService.preDeployTask": "publish-release",
+    "appService.deploySubpath": "OnlineBookstore.API/bin/Release/net8.0/publish",
+    "appService.defaultWebAppToDeploy": "/subscriptions/90321de9-2cc3-4b6d-a10d-863672790374/resourceGroups/appsvc_windows_westus3/providers/Microsoft.Web/sites/OnlineBookStore-kenz-backend"
+}
