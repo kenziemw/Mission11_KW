@@ -1,13 +1,19 @@
-//Kenzie Whitman Section 3, Mission 11 assignment
 import React from 'react';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import BookList from './components/BookList';
+import AdminBooks from './components/AdminBooks';
 
 function App() {
   return (
-    <div className="App">
-      <BookList />
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<BookList />} />
+          <Route path="/adminbooks" element={<AdminBooks />} />
+
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

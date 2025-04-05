@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 // Configure axios to include credentials (cookies) in all requests.
 axios.defaults.withCredentials = true;
@@ -13,15 +14,15 @@ interface Book {
   classification: string;
   category: string;
   pageCount: number;
-  price: number;
+  price?: number;
 }
 
 interface CartItem {
   bookID: number;
   title: string;
-  price: number;
+  price?: number;
   quantity: number;
-  subtotal: number;
+  subtotal?: number;
 }
 
 const BookList = () => {
@@ -32,8 +33,8 @@ const BookList = () => {
   const [booksPerPage, setBooksPerPage] = useState<number>(5);
 
   const apiUrl = category
-    ? `http://localhost:5272/api/books/category/${category}`
-    : `http://localhost:5272/api/books/all`;
+    ? `https://onlinebookstore-kenz-backend-h7axfjgmgcgkexaa.westus3-01.azurewebsites.net/api/books/category/${category}`
+    : `https://onlinebookstore-kenz-backend-h7axfjgmgcgkexaa.westus3-01.azurewebsites.net/api/books`;
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -47,7 +48,7 @@ const BookList = () => {
 
     const fetchCart = async () => {
       try {
-        const response = await axios.get('http://localhost:5272/api/cart');
+        const response = await axios.get('https://bookstore-backend-kenz.azurewebsites.net/api/cart');
         setCart(response.data);
       } catch (error) {
         console.error('Error fetching cart:', error);
@@ -60,7 +61,7 @@ const BookList = () => {
 
   const addToCart = async (bookID: number) => {
     try {
-      const response = await axios.post(`http://localhost:5272/api/cart/${bookID}`);
+      const response = await axios.post(`https://bookstore-backend-kenz.azurewebsites.net/api/cart/${bookID}`);
       setCart(response.data);
     } catch (error) {
       console.error('Error adding to cart:', error);
@@ -69,12 +70,19 @@ const BookList = () => {
 
   const paginatedBooks = books.slice((page - 1) * booksPerPage, page * booksPerPage);
   const pageCount = Math.ceil(books.length / booksPerPage);
-  const total = cart.reduce((sum, item) => sum + item.subtotal, 0);
+  const total = cart.reduce((sum, item) => sum + (item.subtotal ?? 0), 0);
   const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
   const progress = Math.min(100, totalQuantity * 20);
 
   return (
     <div className="container mt-4">
+      {/* Admin Button */}
+      <div className="d-flex justify-content-end mb-2">
+        <Link to="/adminbooks">
+          <button className="btn btn-secondary">Admin</button>
+        </Link>
+      </div>
+
       {/* Header + Filters */}
       <div className="sticky-top bg-white p-2">
         <h2>Online Bookstore</h2>
@@ -138,7 +146,7 @@ const BookList = () => {
                   <td>{book.classification}</td>
                   <td>{book.category}</td>
                   <td>{book.pageCount}</td>
-                  <td>${book.price.toFixed(2)}</td>
+                  <td>{book.price !== undefined ? `$${book.price.toFixed(2)}` : "N/A"}</td>
                   <td>
                     <button className="btn btn-sm btn-outline-primary" onClick={() => addToCart(book.bookID)}>
                       Add to Cart
@@ -172,14 +180,14 @@ const BookList = () => {
             {cart.map((item) => (
               <li key={item.bookID} className="list-group-item d-flex justify-content-between align-items-center">
                 <span>{item.title} x {item.quantity}</span>
-                <span>${item.subtotal.toFixed(2)}</span>
+                <span>{item.subtotal !== undefined ? `$${item.subtotal.toFixed(2)}` : "N/A"}</span>
               </li>
             ))}
           </ul>
 
           <div className="d-flex justify-content-between mt-2 mb-3">
             <strong>Total:</strong>
-            <strong>${total.toFixed(2)}</strong>
+            <strong>{total !== undefined ? `$${total.toFixed(2)}` : "$0.00"}</strong>
           </div>
 
           <div className="progress mb-3">
@@ -195,13 +203,12 @@ const BookList = () => {
             </div>
           </div>
 
-            <button
-              className="btn btn-success w-100"
-              onClick={() => alert('🛍️ Checkout feature coming soon!')}
-            >
-              Proceed to Checkout
-            </button>
-
+          <button
+            className="btn btn-success w-100"
+            onClick={() => alert('🛍️ Checkout feature coming soon!')}
+          >
+            Proceed to Checkout
+          </button>
         </div>
       </div>
     </div>
