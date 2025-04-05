@@ -34,7 +34,7 @@ const BookList = () => {
 
   const apiUrl = category
     ? `https://onlinebookstore-kenz-backend-h7axfjgmgcgkexaa.westus3-01.azurewebsites.net/api/books/category/${category}`
-    : `https://onlinebookstore-kenz-backend-h7axfjgmgcgkexaa.westus3-01.azurewebsites.net/api/books`;
+    : `https://onlinebookstore-kenz-backend-h7axfjgmgcgkexaa.westus3-01.azurewebsites.net/api/books/GetBooks`;
 
   useEffect(() => {
     const fetchBooks = async () => {

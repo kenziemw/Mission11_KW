@@ -31,7 +31,7 @@ namespace OnlineBookstore.API.Controllers
         }
 
         // GET: api/Books?page=1&pageSize=5&sortBy=Title&sortOrder=asc
-        [HttpGet]
+        [HttpGet("GetBooks")]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks(
             int page = 1, int pageSize = 5, string sortBy = "Title", string sortOrder = "asc")
         {
