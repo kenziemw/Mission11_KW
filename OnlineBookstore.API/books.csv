@@ -1,0 +1,17 @@
+BookID,Title,Author,Publisher,ISBN,Classification,Category,PageCount,Price
+1,"Les Miserables","Victor Hugo",Signet,978-0451419439,Fiction,Classic,1488,9.95
+2,"Team of Rivals","Doris Kearns Goodwin","Simon & Schuster",978-0743270755,Non-Fiction,Biography,944,14.58
+3,"The Snowball","Alice Schroeder",Bantam,978-0553384611,Non-Fiction,Biography,832,21.54
+4,"American Ulysses","Ronald C. White","Random House",978-0812981254,Non-Fiction,Biography,864,11.61
+5,Unbroken,"Laura Hillenbrand","Random House",978-0812974492,Non-Fiction,Historical,528,13.33
+6,"The Great Train Robbery","Michael Crichton",Vintage,978-0804171281,Fiction,Historical,288,13.33
+7,"Deep Work","Cal Newport","Grand Central Publishing",978-1455586691,Non-Fiction,Self-Help,304,14.99
+8,"It's Your Ship","Michael Abrashoff","Grand Central Publishing",978-1455523023,Non-Fiction,Self-Help,240,21.66
+9,"The Virgin Way","Richard Branson",Portfolio,978-1591847984,Non-Fiction,Business,400,29.16
+10,"Sycamore Row","John Grisham",Batnam,978-0553393613,Fiction,Thrillers,642,15.03
+11,"The Way I Heard It","Mike Rowe","Gallery Books",978-1982131470,Fiction,Historical,272,12.3
+12,"The Complete Personal Memoirs of Ulysses S. Grant","Ulysses S. Grant","CreateSpace Independent Publishing Platform",978-1481216043,Non-Fiction,Biography,552,19.99
+13,"The Screwtape Letters","C.S. Lewis",HarperOne,978-0060652937,Fiction,"Christian Books",209,10.27
+14,"Sleep Smarter","Shawn Stevenson","Rodale Books",978-1623367398,Non-Fiction,Health,288,17.59
+15,Titan,"Ron Chernow",Vintage,978-1400077304,Non-Fiction,Biography,832,16.59
+16,"The Hunt for Red October","Tom Clancy",Berkley,978-0440001027,Fiction,Action,656,9.99

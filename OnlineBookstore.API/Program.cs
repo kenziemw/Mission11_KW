@@ -3,33 +3,47 @@ using OnlineBookstore.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+// ✅ Add services BEFORE builder.Build()
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
+
 builder.Services.AddDbContext<BookstoreContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("BookstoreConnection")));
 
-// ✅ FIX: Add in-memory cache to support session
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
-builder.Services.AddHttpContextAccessor();
-
+// ✅ CORS configuration (must be before app = builder.Build())
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")  // MUST match your React app
+        policy.WithOrigins("http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); // ✅ needed for cookies/session
+              .AllowCredentials();
     });
 });
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
+// ✅ Now build the app
 var app = builder.Build();
 
-app.UseRouting();
+// ✅ Middleware config
 app.UseCors("AllowReactApp");
-app.UseSession(); // ✅ This can now work!
-app.UseAuthorization();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bookstore API v1");
+    });
+}
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();

@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineBookstore.API.Data;
 using OnlineBookstore.API.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 
 namespace OnlineBookstore.API.Controllers
 {
@@ -16,6 +19,7 @@ namespace OnlineBookstore.API.Controllers
             _context = context;
         }
 
+        // GET: api/Books/category/Biography
         [HttpGet("category/{category}")]
         public IActionResult GetBooksByCategory(string category)
         {
@@ -26,7 +30,6 @@ namespace OnlineBookstore.API.Controllers
             return Ok(books);
         }
 
-
         // GET: api/Books?page=1&pageSize=5&sortBy=Title&sortOrder=asc
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooks(
@@ -34,7 +37,6 @@ namespace OnlineBookstore.API.Controllers
         {
             IQueryable<Book> query = _context.Books;
 
-            // Sorting (currently supports sorting by Title)
             if (sortBy.Equals("Title", StringComparison.OrdinalIgnoreCase))
             {
                 query = sortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase)
@@ -42,26 +44,65 @@ namespace OnlineBookstore.API.Controllers
                     : query.OrderByDescending(b => b.Title);
             }
 
-            // Get total count for pagination metadata.
             var totalBooks = await query.CountAsync();
 
-            // Pagination logic
             var books = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Optionally, send total count in the response header.
             Response.Headers["X-Total-Count"] = totalBooks.ToString();
 
             return books;
         }
+
+        // GET: api/Books/all
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<Book>>> GetAllBooks()
+        {
+            var books = await _context.Books.ToListAsync();
+            return Ok(books);
+        }
+
+        // POST: api/Books/add
+        [HttpPost("add")]
+        public async Task<IActionResult> AddBook([FromBody] Book book)
+        {
+            if (ModelState.IsValid)
             {
-                var books = await _context.Books.ToListAsync();
-                return Ok(books);
+                _context.Books.Add(book);
+                await _context.SaveChangesAsync();
+                return Ok(new { message = "Book added successfully" });
+            }
+            return BadRequest(ModelState);
+        }
+
+        // POST: api/Books/update
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateBook([FromBody] Book book)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Books.Update(book);
+                await _context.SaveChangesAsync();
+                return Ok(new { message = "Book updated successfully" });
+            }
+            return BadRequest(ModelState);
+        }
+
+        // POST: api/Books/delete/{id}
+        [HttpPost("delete/{id}")]
+        public async Task<IActionResult> DeleteBook(int id)
+        {
+            var book = await _context.Books.FindAsync(id);
+            if (book == null)
+            {
+                return NotFound(new { message = "Book not found" });
             }
 
+            _context.Books.Remove(book);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Book deleted successfully" });
+        }
     }
 }
