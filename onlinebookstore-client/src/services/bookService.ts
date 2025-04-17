@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Book } from "../models/Book";
 
-const API_URL = "https://onlinebookstore-kenz-backend-h7axfjgmgcgkexaa.westus3-01.azurewebsites.net/api";
+const API_BASE_URL = "http://localhost:5272/api";
 
 export const getBooks = async (
   page: number,
@@ -14,9 +14,8 @@ export const getBooks = async (
       ? `&categories=${categories.join(",")}`
       : "";
 
-    const response = await axios.get(
-      `${API_URL}/books?page=${page}&pageSize=${pageSize}&sortBy=${sortBy}${categoryParam}`
-    );
+      const response = await axios.get(`${API_BASE_URL}/books/all`);
+
 
     const books = response.data;
 
@@ -32,7 +31,7 @@ export const getBooks = async (
 
 export const addBook = async (newBook: Book) => {
   try {
-    const response = await axios.post(API_URL, newBook);
+    const response = await axios.post(API_BASE_URL, newBook);
     return response.data;
   } catch (error) {
     console.error("Error adding book:", error);
@@ -42,7 +41,7 @@ export const addBook = async (newBook: Book) => {
 
 export const updateBook = async (book: Book) => {
   try {
-    await axios.put(`${API_URL}/${book.bookID}`, book);
+    await axios.put(`${API_BASE_URL}/${book.bookID}`, book);
   } catch (error) {
     console.error("Error updating book:", error);
     throw error;
@@ -51,7 +50,7 @@ export const updateBook = async (book: Book) => {
 
 export const deleteBook = async (bookID: number) => {
   try {
-    await axios.delete(`${API_URL}/${bookID}`);
+    await axios.delete(`${API_BASE_URL}/${bookID}`);
   } catch (error) {
     console.error("Error deleting book:", error);
     throw error;
